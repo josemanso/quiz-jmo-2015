@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta cahrset = "utf-8">
+    <title>Quiz</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='icon' href='../public/favicon.ico' type = 'image/x-icon' />
+  </head>
+  <body>
+    <h2> Quiz: el juego de las preguntas </h2>
+    <form method="get" action="/quizes/answer">
+    	<p>Pregunta: <%= pregunta %> </p>
+    	<input type = "text" name = "respuesta" value = "Respuesta"/>
+    	<input type = "submit" value = "Enviar">
+    </form>
+  </body>
+</html>
