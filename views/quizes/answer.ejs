@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta cahrset = "utf-8">
-    <title><Quiz></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <link rel='icon' href='../public/favicon.ico' type = 'image/x-icon' />
-  </head>
-  <body>
-    <h2> Quiz: El juego de las preguntas </h2>
+
     
-    <p> <%= respuesta %> </p>
-    <a href = "/quizes/question"> Intentelo otra vez </a>
-  </body>
-</html>
+    <p> <%= respuesta %>  </p>
+    <a href = "/quizes/<%= quiz.id %>"> Volver </a>
+
+

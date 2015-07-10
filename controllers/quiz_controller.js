@@ -2,26 +2,63 @@
 
 var models = require('../models/models.js');
 
-// Get /quizes/question
-exports.question = function(req, res) {
-  //añadimo findAll() para buscar el array de la tabla Quiz
-  models.Quiz.findAll().success(function(quiz) {
-    //res.render('quizes/question', {pregunta: ' Capital de Italia '});
-    res.render('quizes/question', {pregunta: quiz[0].pregunta });
-    })
+// Autoload - factoriza el código si ruta incluye :quizId
+exports.load = function(req, res, next, quizId) {
+  models.Quiz.find(quizId).then(
+    function(quiz) {
+      if (quiz) {
+	req.quiz = quiz;
+	next();
+      } else { next(new Error('No existe quizId = ' + quizId));}
+    }
+			   ).catch(function(error) { next(error);});
+};
+  
+
+// Get /quizes/:id
+exports.show = function(req, res) {
+  res.render('quizes/show', { quiz: req.quiz});
 };
 
 
-// Get /quizes/answer
+// Get /quizes/:id/answer
 exports.answer = function(req, res) {
-  models.Quiz.findAll().success(function(quiz) {
-    if (req.query.respuesta === quiz[0].respuesta){
-      res.render('quizes/answer', {respuesta: ' Correcto '});
-  } else {
-    res.render('quizes/answer', {respuesta: ' Incorrecto '});
+  var resultado = 'Incorrecto';
+  if (req.query.respuesta === req.quiz.respuesta){
+    resultado = ' Correcto ';
   }
-  })
+  res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado});
 };
+
+/*exports.index = function(req, res) {
+  models.Quiz.findAll().then(function(quizes) {
+    res.render('quizes/index', { quizes: quizes});
+  }).catch(function(error)  {next(error);})
+};*/
+
+
+//buscar pregunta Get 
+exports.index = function(req, res) {
+  var buscar = ("%" + req.query.search + "%").replace(/ /g, '%');
+  
+  if(req.query.search) {
+    models.Quiz.findAll({
+      where: ["upper(pregunta) like ?", buscar.toUpperCase()], 
+			order: [['pregunta',  'ASC']]}
+		       ).then(function(quizes) {
+			 res.render('quizes/index', { quizes: quizes});
+			}).catch(function(error)  {next(error);})
+    
+  }else {
+    models.Quiz.findAll().then(
+        function(quizes) {
+        res.render('quizes/index', { quizes: quizes});
+        }
+      ).catch(function(error){ next(error); })
+	  }
+};
+
+
 
 // get /quizes/creditos/author
 exports.author = function(req, res) {
