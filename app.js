@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 
 var partials = require('express-partials');
 var methodOverride = require('method-override');
+var session = require('express-session');
 
 var routes = require('./routes/index');
 //var users = require('./routes/users');
@@ -24,11 +25,46 @@ app.use(favicon(__dirname + '/public/favicon.ico'));
 //app.use(express.favicon(__dirname + '/public/favicon1.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
+
 //app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded());
-app.use(cookieParser());
+app.use(cookieParser('Quiz 2015')); //semilla para cifrar cookie
+//app.use(cookieParser()); 
+app.use(session());  // instalar MV session
+/*
+app.use(session({
+  secret:'Quiz 2015',
+  resave: false,
+  saveUninitialized: true
+}));
+*/
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
+
+//require ('./routes/session')(app);
+
+//copia la sesión que está accesible en req.session en res.locals.sesion para las vistas
+// guarda la ruta de cada solicitud HTTP en session.editos para redirteccionar, después de login o logout
+
+// Helpers dinámicos:
+app.use(function(req, res, next) {
+ /*
+   // si no existe lo inicializa
+  if (!req.session.redir) {
+    req.session.redir = '/';
+  }
+  */
+  //guardar path en session para despues de login
+  if (!req.path.match(/\/login|\/logout/)) {
+    req.session.redir = req.path;
+   
+  }
+  
+  //Hacer visible req.session en las vistas
+  res.locals.session = req.session;
+  next();
+});
+
 
 app.use('/', routes);
 //app.use('/users', users);
