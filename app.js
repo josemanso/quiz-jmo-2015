@@ -46,21 +46,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 //copia la sesión que está accesible en req.session en res.locals.sesion para las vistas
 // guarda la ruta de cada solicitud HTTP en session.editos para redirteccionar, después de login o logout
 
-// Helpers dinámicos:
+// Helpers dinamicos:
 app.use(function(req, res, next) {
- /*
-   // si no existe lo inicializa
+
+  // si no existe lo inicializa
   if (!req.session.redir) {
     req.session.redir = '/';
   }
-  */
-  //guardar path en session para despues de login
-  if (!req.path.match(/\/login|\/logout/)) {
+  // guardar path en session.redir para despues de login
+  if (!req.path.match(/\/login|\/logout|\/user/)) {
     req.session.redir = req.path;
-   
   }
-  
-  //Hacer visible req.session en las vistas
+
+  // Hacer visible req.session en las vistas
   res.locals.session = req.session;
   next();
 });

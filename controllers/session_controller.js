@@ -1,3 +1,12 @@
+//MW de autorización de accesos HTTP restringidos
+exports.loginRequired = function(req, res, next) {
+  if (req.session.user) {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+};
+
 // GET / login  -- Formulario login
 exports.new = function(req, res) {
   var errors = req.session.errors || {};
@@ -26,9 +35,9 @@ exports.create = function(req, res) {
         // La sesión se define por la existencia de:    req.session.user
         req.session.user = {id:user.id, username:user.username, isAdmin:user.isAdmin};
 	
-	
+	res.redirect('/quizes')
+	//res.redirect(req.session.redir);
         //res.redirect(req.session.redir.toString());// redirección a path anterior a login
-	res.redirect(req.session.redir);
     });
 };
 
@@ -37,6 +46,7 @@ exports.create = function(req, res) {
 // DELETE / logout   -- destruir sesión
 exports.destroy = function(req,res) {
   delete req.session.user;
+  res.redirect('/quizes')
+  //res.redirect(req.session.redir);
   //res.redirect(req.session.redir.toString()); // redireción a path anterior a   login
-  res.redirect(req.session.redir);
 };
