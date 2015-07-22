@@ -38,10 +38,19 @@ var Comment = sequelize.import(comment_path);
 
 //Relacción 1 a N
 Comment.belongsTo(Quiz);
-Quiz.hasMany(Comment);
+//Quiz.hasMany(Comment);
+//Para que se borren los comentarios si la pregunta se borra
+Quiz.hasMany(Comment, {
+  'constraints':true,
+  'onUpdate':'cascade',
+  'onDelete':'cascade',
+  'hooks':true
+});
 
 exports.Quiz = Quiz; // exportar la definición de tabla Quiz
 exports.Comment = Comment;
+exports.Sequelize = sequelize;//exportamos BD para estadísticas.
+
 
 // sequelize.sync() crea e inicializa tabla de preguntas en DB
 sequelize.sync().then(function() {

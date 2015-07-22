@@ -4,7 +4,8 @@ var router = express.Router();
 var quizController = require('../controllers/quiz_controller');
 var commentController = require('../controllers/comment_controller');
 var sessionController = require('../controllers/session_controller');
-//var userController = require('../controllers/user_controller');
+var dbController = require('../controllers/db_controller');
+var estadisticasController = require('../controllers/estadisticas_controller');
 
 
 /* GET home page. Página de entrada */
@@ -33,12 +34,20 @@ router.get('/quizes/:quizId(\\d+)/edit',sessionController.loginRequired, quizCon
 router.put('/quizes/:quizId(\\d+)', 	sessionController.loginRequired, quizController.update);
 //router.delete('/quizes/:quizId(\\d+)', quizController.destroy);
 router.delete('/quizes/:quizId(\\d+)', 	sessionController.loginRequired, quizController.delete);
-//rutas comentarios
 
+
+//rutas comentarios
 router.get('/quizes/:quizId(\\d+)/comments/new', commentController.new);
 router.post('/quizes/:quizId(\\d+)/comments', commentController.create);
 router.get('/quizes/:quizId(\\d+)/comments/:commentId(\\d+)/publish', 
 	   sessionController.loginRequired, commentController.publish);
+
+//rutas DB, en 
+//router.get('/DB', dbController.mostrardb);
+router.get('/quizes/mostrardb', dbController.mostrardb);
+
+//ruta GET estadisticas
+router.get('/quizes/estadisticas', estadisticasController.estadisticas);
 
 router.get('/quizes/creditos/author',  quizController.author);
 

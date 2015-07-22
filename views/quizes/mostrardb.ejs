@@ -1,0 +1,44 @@
+<p> Preguntas  y mostrar respuestas</p>
+<table>
+ <tr>
+    <th> ID</th>
+    <th> Pregunta</th>
+    <th> Temática</th>
+    <th> Respuesta</th>
+  </tr>
+<%var i; for (i=0; i< quizes.length; i++) { %>
+ 
+  <tr>
+    <td><%=quizes[i].id %></td>
+    <td><%=quizes[i].pregunta %></td>
+    <td><%=quizes[i].tema %></td>
+    <td><%=quizes[i].respuesta %></a></td>
+   </tr>
+ <%}%>
+ 
+ 
+</table>
+
+<p> Comentarios y mostrar comentarios </p>
+<table>
+ <tr>
+    <th> Comentario(ID)</th>
+    <th> Pregunta(ID)</th>
+    <th> Comentario</th>
+    <th> Publicado</th>
+  </tr>
+  
+  <%var i; for (i=0; i< comments.length; i++) { %>
+   
+    <tr>
+      
+      <td><%=comments[i].id%></td>
+      <td><%=comments[i].QuizId%></td>
+      
+      <td><%=comments[i].texto%></td>
+      <td><%=comments[i].publicado%></td>
+      
+   </tr>
+   
+   <%}%>
+</table>

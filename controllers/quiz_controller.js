@@ -135,8 +135,7 @@ exports.delete = function(req, res) {
   }).catch(function(error) {next(error)});
 };
       
-   
-  
+
 
 
 // get /quizes/creditos/author

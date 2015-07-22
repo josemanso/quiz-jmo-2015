@@ -43,6 +43,29 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //require ('./routes/session')(app);
 
+// auto-logout de sesión
+// expirar sesión tras dos minutos inactivos  o 120000 milisegundos
+app.use(function (req, res, next) {
+  var tiempo = 120000;
+  var now = new Date().getTime(); //fecha actual
+  
+  if(req.session.user && req.session.lastAccess) {
+    var lifetime = now - req.session.lastAccess;
+    console.log("tiempo de vida: "+lifetime);
+    if(tiempo<= lifetime){
+      req.session.destroy();
+      //delete req.sesion.user;
+      res.redirect('/login');
+      //return;
+    } 
+  }
+  req.session.lastAccess = now;
+  
+  // Hacer visible req.session en las vistas
+  //res.locals.session = req.sesion;
+  next();
+});
+
 //copia la sesión que está accesible en req.session en res.locals.sesion para las vistas
 // guarda la ruta de cada solicitud HTTP en session.editos para redirteccionar, después de login o logout
 
@@ -99,6 +122,7 @@ app.use(function(err, req, res, next) {
         errors: []
     });
 });
+
 
 
 module.exports = app;
