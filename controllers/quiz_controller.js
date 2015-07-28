@@ -2,6 +2,19 @@
 
 var models = require('../models/models.js');
 
+// MW que permite acciones solamente si el quiz objeto pertenece al usuario logeado o  a la cuenta del administrador
+exports.ownershipRequired = function(req, res, next) {
+  var objQuizOwner = req.quiz.UserId;
+  var logUser = req.session.user.id;
+  var isAdmin = req.session.user.isAdmin;
+  
+  if (isAdmin || objQuizOwner === logUser) {
+    next();
+  } else {
+    res.redirect('/');
+  }
+};
+
 // Autoload - factoriza el código si ruta incluye :quizId
 exports.load = function(req, res, next, quizId) {
   models.Quiz.find({
@@ -53,13 +66,21 @@ exports.index = function(req, res) {
 			 res.render('quizes/index', { quizes: quizes, errors: []});
 			}).catch(function(error)  {next(error);})
     
-  }else {
-    models.Quiz.findAll().then(
-        function(quizes) {
-        res.render('quizes/index', { quizes: quizes, errors: []});
-        }
-      ).catch(function(error){ next(error); })
-	  }
+  }else {  //no estamos buscado, ahora añado para mis preguntas
+    
+    var options = {};
+    if (req.user) { //req.user es creado por autoload de usuario
+		    //si la ruta lleva parámetro .quizId
+      options.where = {UserId:req.user.id};
+    }
+    
+    models.Quiz.findAll(options).then(
+      function(quizes) {
+	res.render('quizes/index', { quizes: quizes, errors: []});
+	}
+	).catch(function(error) { next(error); })
+  }
+
 };
 
 //GET /quizes/new
@@ -70,8 +91,10 @@ exports.new = function(req, res) {
   res.render('quizes/new', {quiz: quiz, errors: []});
 };
 
-//POST /quizes/create
+//POST /quizes/create    añadir campo UserId 
 exports.create = function(req, res) {
+  req.body.quiz.UserId = req.session.user.id;
+  
   var quiz = models.Quiz.build( req.body.quiz );
   
   //guarda en DB los campos pregunta y respuesta de quiz
@@ -92,7 +115,7 @@ exports.create = function(req, res) {
     res.render('quizes/new', {quiz:quiz, errors: errores});
   */
     } else {
-      quiz.save({fields: ["pregunta", "respuesta", "tema"]})
+      quiz.save({fields: ["pregunta", "respuesta", "tema", "UserId"]})
       .then(function(){
 	res.redirect('/quizes')});
       } //Redirección HTTP (URL relativo) lista preguntas
@@ -108,6 +131,7 @@ exports.edit = function(req, res) {
 
 //PUT /quizes/:id
 exports.update = function(req, res) {
+    
   req.quiz.pregunta = req.body.quiz.pregunta;
   req.quiz.respuesta = req.body.quiz.respuesta;
   req.quiz.tema = req.body.quiz.tema;

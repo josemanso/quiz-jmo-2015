@@ -36,6 +36,12 @@ var Quiz = sequelize.import(quiz_path);
 var comment_path = path.join(__dirname, 'comment');
 var Comment = sequelize.import(comment_path);
 
+// Importar definición tabla user
+var user_path = path.join(__dirname, 'user');
+var User = sequelize.import(user_path);
+
+
+
 //Relacción 1 a N
 Comment.belongsTo(Quiz);
 //Quiz.hasMany(Comment);
@@ -47,25 +53,46 @@ Quiz.hasMany(Comment, {
   'hooks':true
 });
 
+//Relacción-N entre User y Quiz, los quizes pertenecen a un usuario registrado
+Quiz.belongsTo(User);
+User.hasMany(Quiz);
+
+
+
 exports.Quiz = Quiz; // exportar la definición de tabla Quiz
 exports.Comment = Comment;
 exports.Sequelize = sequelize;//exportamos BD para estadísticas.
+exports.User = User;
 
 
 // sequelize.sync() crea e inicializa tabla de preguntas en DB
 sequelize.sync().then(function() {
   // success(..) ahora then(...)  ejecuta el manejador una vez creada la tabla
-  Quiz.count().then(function(count) {
+  User.count().then(function(count) {
     if(count === 0) { // la tabla se inicializa solo si está vacía
-      Quiz.create({ pregunta : 'Capital de Italia',
+      //El administrador solo se puede crear así
+      User.bulkCreate(
+	[ {username: 'admin', password: '1234', isAdmin: true},
+	  {username: 'pepe',  password: '5678'} // isAdmin por defecto a false
+	  ]
+	   ).then(function() { 
+	     console.log('Base de datos, tabla de user, inicializada');
+	     Quiz.count().then(function(count) {
+	        if(count === 0) { // inicio si vacía
+		  Quiz.bulkCreate( // user pepe (2(
+		    [{ pregunta : 'Capital de Italia',
 		    respuesta: 'Roma',
-		    tema: 'Humanidades'
-      });
-      Quiz.create({ pregunta : 'Capital de Portugal',
+		    tema: 'Humanidades', UserId:2},
+		     { pregunta : 'Capital de Portugal',
 		    respuesta: 'Lisboa',
-		    tema: 'Humanidades'
-      })
-      .then(function() {console.log('Base de datos inicializada')});
+		    tema: 'Humanidades', UserId: 2}
+		    ]
+		       )
+		  .then(function() {console.log('Base de datos, tabla quiz y comment,  inicializada')});
+		};
+	     });
+	   });
     };
   });
 });
+   

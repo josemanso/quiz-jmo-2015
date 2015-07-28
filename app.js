@@ -28,6 +28,10 @@ app.use(bodyParser.json());
 
 //app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded());
+
+//var multer = require('multer');
+//app.use(multer({ dest: "/public/media/" })); // no me deja en routes/index.js
+
 app.use(cookieParser('Quiz 2015')); //semilla para cifrar cookie
 //app.use(cookieParser()); 
 app.use(session());  // instalar MV session
