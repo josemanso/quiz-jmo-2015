@@ -5,6 +5,7 @@
     <th> Pregunta</th>
     <th> Temática</th>
     <th> Respuesta</th>
+    <th>User (ID prop.)</th>
   </tr>
 <%var i; for (i=0; i< quizes.length; i++) { %>
  
@@ -13,6 +14,7 @@
     <td><%=quizes[i].pregunta %></td>
     <td><%=quizes[i].tema %></td>
     <td><%=quizes[i].respuesta %></a></td>
+    <td><%=quizes[i].UserId %></a></td>
    </tr>
  <%}%>
  
@@ -38,6 +40,30 @@
       
       <td><%=comments[i].texto%></td>
       <td><%=comments[i].publicado%></td>
+      
+   </tr>
+   
+   <%}%>
+</table>
+
+<h3> Usuarios</h3>
+<table>
+ <tr>
+    <th> Usuario(ID)</th>
+    <th> Nombre)</th>
+    <th> Administrador</th>
+    
+  </tr>
+  
+  <%var i; for (i=0; i< users.length; i++) { %>
+   
+    <tr>
+      
+      <td><%=users[i].id%></td>
+      <td><%=users[i].username%></td>
+      
+      <td><%=users[i].isAdmin%></td>
+      
       
    </tr>
    
